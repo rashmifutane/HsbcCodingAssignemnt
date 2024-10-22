@@ -5,14 +5,28 @@ import java.io.RandomAccessFile;
 
 public class AsciiFileOperation {
 
-    public static void reverseContent() throws Exception{
-        final RandomAccessFile in = new RandomAccessFile("/Users/futaner/AsciiFile/src/com/company/abc.txt", "r");
-        final FileOutputStream out = new FileOutputStream("destination.txt");
-        for(long p = in.length() - 1; p >= 0; p--) {
-            in.seek(p);
-            int b = in.read();
-            out.write(b);
+  private final static Logger LOGGER = new Logger(FileProcessor.class.getName());
+    public static void processFile(String inputPath, String outputPath) {
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get(inputPath));
+             BufferedWriter writer = Files.newBufferedWriter(Paths.get(outputPath))) {
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String reversedLine = reverseContent(line);
+                writer.write(reversedLine);
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            LOGGER.error("Exception occurred in processFile: " + e.getMessage());
         }
+    }
+
+    public static String reverseContent(String content) {
+        return new StringBuilder(content).reverse().toString();
+    }
+
+    public static void main(String[] args) {
+        processFile("source.txt", "output.txt");
     }
 }
 
